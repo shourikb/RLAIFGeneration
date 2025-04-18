@@ -1,0 +1,2 @@
+Activate the conda environment using: conda activate py310
+Deactivate using: conda deactivate
