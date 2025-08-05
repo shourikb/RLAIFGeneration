@@ -1,18 +1,295 @@
-INFO 04-03 17:29:12 __init__.py:183] Automatically detected platform cuda.
-INFO 04-03 17:29:23 config.py:520] This model supports multiple tasks: {'reward', 'classify', 'generate', 'embed', 'score'}. Defaulting to 'generate'.
-WARNING 04-03 17:29:23 arg_utils.py:1107] Chunked prefill is enabled by default for models with max_model_len > 32K. Currently, chunked prefill might not work with some features or models. If you encounter any issues, please disable chunked prefill by setting --enable-chunked-prefill=False.
-INFO 04-03 17:29:23 config.py:1483] Chunked prefill is enabled with max_num_batched_tokens=2048.
-INFO 04-03 17:29:24 llm_engine.py:232] Initializing an LLM engine (v0.7.0) with config: model='unsloth/Meta-Llama-3.1-8b-instruct', speculative_config=None, tokenizer='tokenizer_tmp', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=131072, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(guided_decoding_backend='xgrammar'), observability_config=ObservabilityConfig(otlp_traces_endpoint=None, collect_model_forward_time=False, collect_model_execute_time=False), seed=0, served_model_name=unsloth/Meta-Llama-3.1-8b-instruct, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=False, chunked_prefill_enabled=True, use_async_output_proc=True, disable_mm_preprocessor_cache=False, mm_processor_kwargs=None, pooler_config=None, compilation_config={"splitting_ops":[],"compile_sizes":[],"cudagraph_capture_sizes":[256,248,240,232,224,216,208,200,192,184,176,168,160,152,144,136,128,120,112,104,96,88,80,72,64,56,48,40,32,24,16,8,4,2,1],"max_capture_size":256}, use_cached_outputs=False, 
-INFO 04-03 17:29:25 cuda.py:225] Using Flash Attention backend.
-INFO 04-03 17:29:25 model_runner.py:1110] Starting to load model unsloth/Meta-Llama-3.1-8b-instruct...
-INFO 04-03 17:29:27 weight_utils.py:251] Using model weights format ['*.safetensors']
-INFO 04-03 17:31:35 model_runner.py:1115] Loading model weights took 14.9888 GB
-INFO 04-03 17:31:36 worker.py:266] Memory profiling takes 0.94 seconds
-INFO 04-03 17:31:36 worker.py:266] the current vLLM instance can use total_gpu_memory (44.39GiB) x gpu_memory_utilization (0.90) = 39.95GiB
-INFO 04-03 17:31:36 worker.py:266] model weights take 14.99GiB; non_torch_memory takes 0.06GiB; PyTorch activation peak memory takes 1.19GiB; the rest of the memory reserved for KV Cache is 23.71GiB.
-INFO 04-03 17:31:37 executor_base.py:108] # CUDA blocks: 12139, # CPU blocks: 2048
-INFO 04-03 17:31:37 executor_base.py:113] Maximum concurrency for 131072 tokens per request: 1.48x
-INFO 04-03 17:31:38 model_runner.py:1430] Capturing cudagraphs for decoding. This may lead to unexpected consequences if the model is not static. To run the model in eager mode, set 'enforce_eager=True' or use '--enforce-eager' in the CLI. If out-of-memory error occurs during cudagraph capture, consider decreasing `gpu_memory_utilization` or switching to eager mode. You can also reduce the `max_num_seqs` as needed to decrease memory usage.
-INFO 04-03 17:31:50 model_runner.py:1558] Graph capturing finished in 12 secs, took 0.85 GiB
-INFO 04-03 17:31:50 llm_engine.py:429] init engine (profile, create kv cache, warmup model) took 15.06 seconds
-INFO 04-03 17:31:51 chat_utils.py:330] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+INFO 07-14 02:26:01 [__init__.py:244] Automatically detected platform cuda.
+INFO 07-14 02:26:01 [__init__.py:244] Automatically detected platform cuda.
+INFO 07-14 02:26:01 [__init__.py:244] Automatically detected platform cuda.
+INFO 07-14 02:26:01 [__init__.py:244] Automatically detected platform cuda.
+Running on GPU 0
+Running on GPU 1
+Running on GPU 2
+Running on GPU 3
+INFO 07-14 02:26:22 [config.py:823] This model supports multiple tasks: {'score', 'embed', 'reward', 'generate', 'classify'}. Defaulting to 'generate'.
+INFO 07-14 02:26:22 [config.py:823] This model supports multiple tasks: {'embed', 'score', 'classify', 'reward', 'generate'}. Defaulting to 'generate'.
+INFO 07-14 02:26:22 [config.py:823] This model supports multiple tasks: {'generate', 'reward', 'score', 'classify', 'embed'}. Defaulting to 'generate'.
+INFO 07-14 02:26:22 [config.py:823] This model supports multiple tasks: {'generate', 'embed', 'classify', 'score', 'reward'}. Defaulting to 'generate'.
+INFO 07-14 02:26:22 [config.py:2195] Chunked prefill is enabled with max_num_batched_tokens=8192.
+INFO 07-14 02:26:22 [config.py:2195] Chunked prefill is enabled with max_num_batched_tokens=8192.
+INFO 07-14 02:26:22 [config.py:2195] Chunked prefill is enabled with max_num_batched_tokens=8192.
+INFO 07-14 02:26:22 [config.py:2195] Chunked prefill is enabled with max_num_batched_tokens=8192.
+INFO 07-14 02:26:24 [core.py:455] Waiting for init message from front-end.
+INFO 07-14 02:26:24 [core.py:455] Waiting for init message from front-end.
+INFO 07-14 02:26:24 [core.py:70] Initializing a V1 LLM engine (v0.9.1) with config: model='allenai/Llama-3.1-Tulu-3-8B-SFT', speculative_config=None, tokenizer='tokenizer_tmp', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=131072, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=allenai/Llama-3.1-Tulu-3-8B-SFT, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level":3,"debug_dump_path":"","cache_dir":"","backend":"","custom_ops":["none"],"splitting_ops":["vllm.unified_attention","vllm.unified_attention_with_output"],"use_inductor":true,"compile_sizes":[],"inductor_compile_config":{"enable_auto_functionalized_v2":false},"inductor_passes":{},"use_cudagraph":true,"cudagraph_num_of_warmups":1,"cudagraph_capture_sizes":[512,504,496,488,480,472,464,456,448,440,432,424,416,408,400,392,384,376,368,360,352,344,336,328,320,312,304,296,288,280,272,264,256,248,240,232,224,216,208,200,192,184,176,168,160,152,144,136,128,120,112,104,96,88,80,72,64,56,48,40,32,24,16,8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"max_capture_size":512,"local_cache_dir":null}
+INFO 07-14 02:26:24 [core.py:455] Waiting for init message from front-end.
+INFO 07-14 02:26:24 [core.py:70] Initializing a V1 LLM engine (v0.9.1) with config: model='allenai/Llama-3.1-Tulu-3-8B-SFT', speculative_config=None, tokenizer='tokenizer_tmp', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=131072, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=allenai/Llama-3.1-Tulu-3-8B-SFT, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level":3,"debug_dump_path":"","cache_dir":"","backend":"","custom_ops":["none"],"splitting_ops":["vllm.unified_attention","vllm.unified_attention_with_output"],"use_inductor":true,"compile_sizes":[],"inductor_compile_config":{"enable_auto_functionalized_v2":false},"inductor_passes":{},"use_cudagraph":true,"cudagraph_num_of_warmups":1,"cudagraph_capture_sizes":[512,504,496,488,480,472,464,456,448,440,432,424,416,408,400,392,384,376,368,360,352,344,336,328,320,312,304,296,288,280,272,264,256,248,240,232,224,216,208,200,192,184,176,168,160,152,144,136,128,120,112,104,96,88,80,72,64,56,48,40,32,24,16,8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"max_capture_size":512,"local_cache_dir":null}
+INFO 07-14 02:26:24 [core.py:70] Initializing a V1 LLM engine (v0.9.1) with config: model='allenai/Llama-3.1-Tulu-3-8B-SFT', speculative_config=None, tokenizer='tokenizer_tmp', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=131072, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=allenai/Llama-3.1-Tulu-3-8B-SFT, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level":3,"debug_dump_path":"","cache_dir":"","backend":"","custom_ops":["none"],"splitting_ops":["vllm.unified_attention","vllm.unified_attention_with_output"],"use_inductor":true,"compile_sizes":[],"inductor_compile_config":{"enable_auto_functionalized_v2":false},"inductor_passes":{},"use_cudagraph":true,"cudagraph_num_of_warmups":1,"cudagraph_capture_sizes":[512,504,496,488,480,472,464,456,448,440,432,424,416,408,400,392,384,376,368,360,352,344,336,328,320,312,304,296,288,280,272,264,256,248,240,232,224,216,208,200,192,184,176,168,160,152,144,136,128,120,112,104,96,88,80,72,64,56,48,40,32,24,16,8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"max_capture_size":512,"local_cache_dir":null}
+INFO 07-14 02:26:24 [core.py:455] Waiting for init message from front-end.
+INFO 07-14 02:26:24 [core.py:70] Initializing a V1 LLM engine (v0.9.1) with config: model='allenai/Llama-3.1-Tulu-3-8B-SFT', speculative_config=None, tokenizer='tokenizer_tmp', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=131072, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=allenai/Llama-3.1-Tulu-3-8B-SFT, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level":3,"debug_dump_path":"","cache_dir":"","backend":"","custom_ops":["none"],"splitting_ops":["vllm.unified_attention","vllm.unified_attention_with_output"],"use_inductor":true,"compile_sizes":[],"inductor_compile_config":{"enable_auto_functionalized_v2":false},"inductor_passes":{},"use_cudagraph":true,"cudagraph_num_of_warmups":1,"cudagraph_capture_sizes":[512,504,496,488,480,472,464,456,448,440,432,424,416,408,400,392,384,376,368,360,352,344,336,328,320,312,304,296,288,280,272,264,256,248,240,232,224,216,208,200,192,184,176,168,160,152,144,136,128,120,112,104,96,88,80,72,64,56,48,40,32,24,16,8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"max_capture_size":512,"local_cache_dir":null}
+WARNING 07-14 02:26:25 [utils.py:2737] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7f63cefed480>
+WARNING 07-14 02:26:25 [utils.py:2737] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7fdd5fd537f0>
+WARNING 07-14 02:26:25 [utils.py:2737] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7fb73e359ae0>
+WARNING 07-14 02:26:25 [utils.py:2737] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7ff93cfbfc70>
+INFO 07-14 02:26:26 [parallel_state.py:1065] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 07-14 02:26:26 [topk_topp_sampler.py:59] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 07-14 02:26:26 [parallel_state.py:1065] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 07-14 02:26:26 [topk_topp_sampler.py:59] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 07-14 02:26:26 [gpu_model_runner.py:1595] Starting to load model allenai/Llama-3.1-Tulu-3-8B-SFT...
+INFO 07-14 02:26:26 [gpu_model_runner.py:1595] Starting to load model allenai/Llama-3.1-Tulu-3-8B-SFT...
+INFO 07-14 02:26:26 [parallel_state.py:1065] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 07-14 02:26:26 [topk_topp_sampler.py:59] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 07-14 02:26:26 [parallel_state.py:1065] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 07-14 02:26:26 [topk_topp_sampler.py:59] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 07-14 02:26:26 [gpu_model_runner.py:1595] Starting to load model allenai/Llama-3.1-Tulu-3-8B-SFT...
+INFO 07-14 02:26:26 [gpu_model_runner.py:1600] Loading model from scratch...
+INFO 07-14 02:26:26 [gpu_model_runner.py:1595] Starting to load model allenai/Llama-3.1-Tulu-3-8B-SFT...
+INFO 07-14 02:26:26 [gpu_model_runner.py:1600] Loading model from scratch...
+INFO 07-14 02:26:26 [cuda.py:252] Using Flash Attention backend on V1 engine.
+INFO 07-14 02:26:26 [cuda.py:252] Using Flash Attention backend on V1 engine.
+INFO 07-14 02:26:26 [gpu_model_runner.py:1600] Loading model from scratch...
+INFO 07-14 02:26:26 [gpu_model_runner.py:1600] Loading model from scratch...
+INFO 07-14 02:26:26 [cuda.py:252] Using Flash Attention backend on V1 engine.
+INFO 07-14 02:26:27 [cuda.py:252] Using Flash Attention backend on V1 engine.
+INFO 07-14 02:26:27 [weight_utils.py:292] Using model weights format ['*.safetensors']
+INFO 07-14 02:26:27 [weight_utils.py:292] Using model weights format ['*.safetensors']
+INFO 07-14 02:26:27 [weight_utils.py:292] Using model weights format ['*.safetensors']
+INFO 07-14 02:26:27 [weight_utils.py:292] Using model weights format ['*.safetensors']
+INFO 07-14 02:27:18 [default_loader.py:272] Loading weights took 51.43 seconds
+INFO 07-14 02:27:19 [default_loader.py:272] Loading weights took 51.89 seconds
+INFO 07-14 02:27:19 [default_loader.py:272] Loading weights took 51.47 seconds
+INFO 07-14 02:27:19 [default_loader.py:272] Loading weights took 51.62 seconds
+INFO 07-14 02:27:19 [gpu_model_runner.py:1624] Model loading took 14.9899 GiB and 51.925451 seconds
+INFO 07-14 02:27:19 [gpu_model_runner.py:1624] Model loading took 14.9899 GiB and 52.566513 seconds
+INFO 07-14 02:27:19 [gpu_model_runner.py:1624] Model loading took 14.9899 GiB and 52.503196 seconds
+INFO 07-14 02:27:19 [gpu_model_runner.py:1624] Model loading took 14.9899 GiB and 52.360726 seconds
+INFO 07-14 02:27:29 [backends.py:462] Using cache directory: /nethome/sbanerjee332/.cache/vllm/torch_compile_cache/b3da158cc7/rank_0_0 for vLLM's torch.compile
+INFO 07-14 02:27:29 [backends.py:462] Using cache directory: /nethome/sbanerjee332/.cache/vllm/torch_compile_cache/b3da158cc7/rank_0_0 for vLLM's torch.compile
+INFO 07-14 02:27:29 [backends.py:462] Using cache directory: /nethome/sbanerjee332/.cache/vllm/torch_compile_cache/b3da158cc7/rank_0_0 for vLLM's torch.compile
+INFO 07-14 02:27:29 [backends.py:462] Using cache directory: /nethome/sbanerjee332/.cache/vllm/torch_compile_cache/b3da158cc7/rank_0_0 for vLLM's torch.compile
+INFO 07-14 02:27:29 [backends.py:472] Dynamo bytecode transform time: 9.64 s
+INFO 07-14 02:27:29 [backends.py:472] Dynamo bytecode transform time: 9.61 s
+INFO 07-14 02:27:29 [backends.py:472] Dynamo bytecode transform time: 9.68 s
+INFO 07-14 02:27:29 [backends.py:472] Dynamo bytecode transform time: 10.07 s
+INFO 07-14 02:27:33 [backends.py:161] Cache the graph of shape None for later use
+INFO 07-14 02:27:33 [backends.py:161] Cache the graph of shape None for later use
+INFO 07-14 02:27:33 [backends.py:161] Cache the graph of shape None for later use
+INFO 07-14 02:27:33 [backends.py:161] Cache the graph of shape None for later use
+INFO 07-14 02:27:56 [backends.py:173] Compiling a graph for general shape takes 26.83 s
+INFO 07-14 02:27:56 [backends.py:173] Compiling a graph for general shape takes 26.88 s
+INFO 07-14 02:27:56 [backends.py:173] Compiling a graph for general shape takes 26.87 s
+INFO 07-14 02:27:56 [backends.py:173] Compiling a graph for general shape takes 26.92 s
+INFO 07-14 02:28:08 [monitor.py:34] torch.compile takes 36.56 s in total
+INFO 07-14 02:28:08 [monitor.py:34] torch.compile takes 36.47 s in total
+INFO 07-14 02:28:08 [monitor.py:34] torch.compile takes 36.48 s in total
+INFO 07-14 02:28:08 [monitor.py:34] torch.compile takes 36.99 s in total
+INFO 07-14 02:28:09 [gpu_worker.py:227] Available KV cache memory: 23.78 GiB
+INFO 07-14 02:28:09 [gpu_worker.py:227] Available KV cache memory: 23.78 GiB
+INFO 07-14 02:28:09 [gpu_worker.py:227] Available KV cache memory: 23.78 GiB
+INFO 07-14 02:28:09 [gpu_worker.py:227] Available KV cache memory: 23.78 GiB
+INFO 07-14 02:28:09 [kv_cache_utils.py:715] GPU KV cache size: 194,816 tokens
+INFO 07-14 02:28:09 [kv_cache_utils.py:719] Maximum concurrency for 131,072 tokens per request: 1.49x
+INFO 07-14 02:28:09 [kv_cache_utils.py:715] GPU KV cache size: 194,816 tokens
+INFO 07-14 02:28:09 [kv_cache_utils.py:719] Maximum concurrency for 131,072 tokens per request: 1.49x
+INFO 07-14 02:28:09 [kv_cache_utils.py:715] GPU KV cache size: 194,816 tokens
+INFO 07-14 02:28:09 [kv_cache_utils.py:719] Maximum concurrency for 131,072 tokens per request: 1.49x
+INFO 07-14 02:28:09 [kv_cache_utils.py:715] GPU KV cache size: 194,816 tokens
+INFO 07-14 02:28:09 [kv_cache_utils.py:719] Maximum concurrency for 131,072 tokens per request: 1.49x
+INFO 07-14 02:28:37 [gpu_model_runner.py:2048] Graph capturing finished in 27 secs, took 0.51 GiB
+INFO 07-14 02:28:37 [core.py:171] init engine (profile, create kv cache, warmup model) took 77.44 seconds
+INFO 07-14 02:28:37 [gpu_model_runner.py:2048] Graph capturing finished in 27 secs, took 0.51 GiB
+INFO 07-14 02:28:37 [core.py:171] init engine (profile, create kv cache, warmup model) took 78.05 seconds
+INFO 07-14 02:28:37 [chat_utils.py:420] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+INFO 07-14 02:28:38 [chat_utils.py:420] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+INFO 07-14 02:28:38 [gpu_model_runner.py:2048] Graph capturing finished in 29 secs, took 0.51 GiB
+INFO 07-14 02:28:38 [core.py:171] init engine (profile, create kv cache, warmup model) took 78.70 seconds
+INFO 07-14 02:28:38 [gpu_model_runner.py:2048] Graph capturing finished in 29 secs, took 0.51 GiB
+INFO 07-14 02:28:38 [core.py:171] init engine (profile, create kv cache, warmup model) took 78.82 seconds
+INFO 07-14 02:28:39 [chat_utils.py:420] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+INFO 07-14 02:28:39 [chat_utils.py:420] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+PANIC on index 0
+PANIC on index 2
+PANIC on index 3
+PANIC on index 4
+PANIC on index 5
+PANIC on index 6
+PANIC on index 7
+PANIC on index 8
+PANIC on index 9
+PANIC on index 10
+PANIC on index 11
+PANIC on index 12
+PANIC on index 13
+PANIC on index 14
+PANIC on index 15
+PANIC on index 16
+PANIC on index 17
+PANIC on index 18
+PANIC on index 19
+PANIC on index 20
+PANIC on index 21
+PANIC on index 22
+PANIC on index 23
+PANIC on index 25
+PANIC on index 26
+PANIC on index 27
+PANIC on index 28
+PANIC on index 29
+PANIC on index 30
+PANIC on index 31
+PANIC on index 32
+PANIC on index 33
+PANIC on index 34
+PANIC on index 35
+PANIC on index 36
+PANIC on index 37
+PANIC on index 39
+PANIC on index 40
+PANIC on index 41
+PANIC on index 42
+PANIC on index 43
+PANIC on index 44
+PANIC on index 45
+PANIC on index 46
+PANIC on index 47
+PANIC on index 48
+PANIC on index 49
+PANIC on index 50
+PANIC on index 51
+PANIC on index 52
+PANIC on index 53
+PANIC on index 54
+PANIC on index 55
+PANIC on index 56
+PANIC on index 57
+PANIC on index 60
+PANIC on index 61
+PANIC on index 62
+PANIC on index 63
+PANIC on index 0
+PANIC on index 1
+PANIC on index 2
+PANIC on index 3
+PANIC on index 6
+PANIC on index 7
+PANIC on index 8
+PANIC on index 9
+PANIC on index 10
+PANIC on index 11
+PANIC on index 12
+PANIC on index 13
+PANIC on index 14
+PANIC on index 15
+PANIC on index 17
+PANIC on index 18
+PANIC on index 20
+PANIC on index 21
+PANIC on index 22
+PANIC on index 23
+PANIC on index 24
+PANIC on index 25
+PANIC on index 27
+PANIC on index 28
+PANIC on index 29
+PANIC on index 33
+PANIC on index 34
+PANIC on index 35
+PANIC on index 36
+PANIC on index 37
+PANIC on index 39
+PANIC on index 40
+PANIC on index 42
+PANIC on index 44
+PANIC on index 45
+PANIC on index 46
+PANIC on index 47
+PANIC on index 48
+PANIC on index 50
+PANIC on index 53
+PANIC on index 54
+PANIC on index 55
+PANIC on index 56
+PANIC on index 57
+PANIC on index 60
+PANIC on index 61
+PANIC on index 62
+PANIC on index 63
+PANIC on index 0
+PANIC on index 1
+PANIC on index 2
+PANIC on index 3
+PANIC on index 4
+PANIC on index 5
+PANIC on index 6
+PANIC on index 9
+PANIC on index 10
+PANIC on index 11
+PANIC on index 12
+PANIC on index 13
+PANIC on index 14
+PANIC on index 15
+PANIC on index 16
+PANIC on index 17
+PANIC on index 18
+PANIC on index 19
+PANIC on index 20
+PANIC on index 21
+PANIC on index 22
+PANIC on index 23
+PANIC on index 24
+PANIC on index 25
+PANIC on index 27
+PANIC on index 28
+PANIC on index 29
+PANIC on index 30
+PANIC on index 31
+PANIC on index 33
+PANIC on index 35
+PANIC on index 36
+PANIC on index 38
+PANIC on index 39
+PANIC on index 40
+PANIC on index 41
+PANIC on index 42
+PANIC on index 43
+PANIC on index 44
+PANIC on index 45
+PANIC on index 46
+PANIC on index 48
+PANIC on index 49
+PANIC on index 52
+PANIC on index 53
+PANIC on index 55
+PANIC on index 56
+PANIC on index 59
+PANIC on index 60
+PANIC on index 61
+PANIC on index 62
+PANIC on index 63
+PANIC on index 38
+PANIC on index 9
+PANIC on index 10
+PANIC on index 11
+PANIC on index 18
+PANIC on index 19
+PANIC on index 21
+PANIC on index 23
+PANIC on index 25
+PANIC on index 26
+PANIC on index 27
+PANIC on index 28
+PANIC on index 29
+PANIC on index 31
+PANIC on index 32
+PANIC on index 34
+PANIC on index 38
+PANIC on index 39
+PANIC on index 41
+PANIC on index 43
+PANIC on index 46
+PANIC on index 48
+PANIC on index 51
+PANIC on index 54
+PANIC on index 56
+PANIC on index 57
+PANIC on index 58
+PANIC on index 59
+PANIC on index 60
+PANIC on index 61
+PANIC on index 62
+PANIC on index 56
