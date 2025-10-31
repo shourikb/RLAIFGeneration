@@ -2,14 +2,19 @@ import matplotlib.pyplot as plt
 import json
 import re
 from collections import Counter
+from transformers import AutoTokenizer
 
 BIN_SIZE = 50
+
+model_name =  "allenai/Llama-3.1-Tulu-3-8B-SFT" 
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer.save_pretrained("tokenizer_tmp")
 
 def get_bin(val, bin_size):
     return (val // bin_size) * bin_size
 
 def tokenize(s):
-    return re.findall(r'\b\w+\b', s.lower())
+    return tokenizer.encode(s.lower())
 
 def count_distinct_tokens(s):
     tokens = tokenize(s)
@@ -20,7 +25,14 @@ def bigrams(s):
     bigrams = zip(tokens, tokens[1:])  # create consecutive pairs
     return bigrams
 
-def compute_averages_from_jsonl(path, use_combined=False):
+def compute_averages_from_jsonl(path, use_combined=False, return_selected=False):
+    if use_combined:
+        desired_total = 55000
+        target_tulu_bins = {b: int(anthropic_probs.get(b, 0) * desired_total) for b in anthropic_bins}
+    else:
+        target_tulu_bins = None
+    
+    selected_conversations = []
     tulu_bins_used = Counter()
     total_token_counts = 0
     total_unique_bigram_counts = 0
@@ -32,7 +44,7 @@ def compute_averages_from_jsonl(path, use_combined=False):
     total_bigrams = 0
     with open(path, 'r') as f:
         for line in f:
-            if len(convo_lengths) > 128 and not use_combined:
+            if len(convo_lengths) > 55000 and not use_combined:
                 break
             item = json.loads(line)
             if use_combined:
@@ -43,10 +55,12 @@ def compute_averages_from_jsonl(path, use_combined=False):
             convo_len = len(tokenize(text))
             bin_id = get_bin(convo_len, BIN_SIZE)
 
-            if use_combined and tulu_bins_used[bin_id] >= anthropic_bins.get(bin_id, 0):
+            if use_combined and tulu_bins_used[bin_id] >= target_tulu_bins.get(bin_id, 0):
                 continue
             
             tulu_bins_used[bin_id] += 1
+            if return_selected:
+                selected_conversations.append(item)
 
             convo_lengths.append(convo_len)
             total_token_counts += count_distinct_tokens(text)
@@ -62,11 +76,15 @@ def compute_averages_from_jsonl(path, use_combined=False):
     avg_turn_length = total_turns / count if count else 0
     word_to_token_ratio = len(global_unique_words) / total_convo_length if total_convo_length else 0
     unique_bigram_to_total_bigram_ratio = total_unique_bigram_counts / total_bigrams if total_bigrams else 0
-    return avg_tokens, avg_bigrams, avg_convo_length, avg_turn_length, convo_lengths, word_to_token_ratio, unique_bigram_to_total_bigram_ratio
+
+    if return_selected:
+        return avg_tokens, avg_bigrams, avg_convo_length, avg_turn_length, convo_lengths, word_to_token_ratio, unique_bigram_to_total_bigram_ratio, selected_conversations
+    else:
+        return avg_tokens, avg_bigrams, avg_convo_length, avg_turn_length, convo_lengths, word_to_token_ratio, unique_bigram_to_total_bigram_ratio
 
 # File paths
 file1_path = 'anthropic.jsonl'  # just 'chosen'
-file2_path = 'sample3.jsonl'  # 'chosen' + 'response_a'
+file2_path = 'filtered_sample5.jsonl'  # 'chosen' + 'response_a'
 
 # Compute
 avg_tokens_1, avg_bigrams_1, avg_convos_1, avg_turn_1, convo_lengths_1, wtr_1, ubtb_1 = compute_averages_from_jsonl(file1_path, use_combined=False)
@@ -76,9 +94,12 @@ for length in convo_lengths_1:
     b = get_bin(length, BIN_SIZE)
     anthropic_bins[b] += 1
 
+total_anthropic = sum(anthropic_bins.values())
+anthropic_probs = {k: v / total_anthropic for k, v in anthropic_bins.items()}
+
 print("Anthropic bin counts:", anthropic_bins)
 
-avg_tokens_2, avg_bigrams_2, avg_convos_2, avg_turn_2, convo_lengths_2, wtr_2, ubtb_2 = compute_averages_from_jsonl(file2_path, use_combined=True)
+avg_tokens_2, avg_bigrams_2, avg_convos_2, avg_turn_2, convo_lengths_2, wtr_2, ubtb_2, selected_convos_2 = compute_averages_from_jsonl(file2_path, use_combined=True, return_selected=True)
 
 # Print results
 print("=== File 1 (Anthropic) ===")
@@ -124,3 +145,10 @@ plt.grid(True, linestyle='--', alpha=0.7)
 plt.tight_layout()
 plt.savefig("histogram_tulu.png")
 plt.close()
+
+# Save selected conversations from file2 to finalconvos.jsonl
+with open("finalconvos.jsonl", "w") as out_f:
+    for convo in selected_convos_2:
+        out_f.write(json.dumps(convo) + "\n")
+
+print(f"Saved {len(selected_convos_2)} selected conversations to finalconvos.jsonl")

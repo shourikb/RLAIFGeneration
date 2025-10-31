@@ -37,7 +37,7 @@ def reset_all_seeds():
     return seed
 
 test_tracker = ["" for _ in range(64)]
-def eachturn(convos, model, sp, is_human, sample, tokens, convo_tracker=[], update=True):
+def eachturn(convos, model, sp, is_human, sample, tokens, input_tokens, tokenizer, convo_tracker=[], update=True):
     time.sleep(1)
     if is_human:
         prompt = "Given the above conversation, generate the just the next human part of the conversation for the human by trying to converse with the assistant. Follow the topic provided in the conversation. Try to generate of similar length to a single response in the sample conversation."
@@ -50,7 +50,21 @@ def eachturn(convos, model, sp, is_human, sample, tokens, convo_tracker=[], upda
         
     all_conversations = []
     for convo in convos:
-        context_convo = "Here is a sample conversation: \n\n" + sample + "\n\nREAL CONVERSATION\n\n" + convo + "\n\n" + prefix
+        context_convo = f"""
+        You are generating the next line in a conversation between a human and an assistant.
+        Below is a sample conversation for style:
+        === SAMPLE CONVERSATION === 
+        {sample}
+        === END SAMPLE ===
+        
+        Now continue the real conversation below.
+        Only add one new line in the correct speaker's voice.
+        
+        === REAL CONVERSATION SO FAR===  
+        {convo} 
+        === CONTINUE ON THE NEXT LINE===
+        {prefix}
+        """
         
         full_conversation = [
              {
@@ -69,6 +83,8 @@ def eachturn(convos, model, sp, is_human, sample, tokens, convo_tracker=[], upda
     outputs = model.chat(all_conversations, continue_final_message=True, add_generation_prompt=False, sampling_params=sp, use_tqdm=True)
     for i in range(len(outputs)):
         final_result = outputs[i].outputs[0].text.strip()
+
+        input_tokens[i] += len(tokenizer.encode(all_conversations[i][1]["content"]))
 
         test_tracker[i] += "\n\nSWITCH\n\n" + final_result
         if not final_result:
@@ -102,7 +118,7 @@ def main():
     tokenizer.save_pretrained("tokenizer_tmp")
 
     # llm = LLM(model="unsloth/Meta-Llama-3.1-8b-instruct")
-    llm = LLM(model=model_name, tokenizer="tokenizer_tmp")
+    llm = LLM(model=model_name, tokenizer="tokenizer_tmp", gpu_memory_utilization=0.8)
 
     batch_end = args.batch_start + args.batch_count
     for c in range(args.batch_start, batch_end):
@@ -110,11 +126,12 @@ def main():
         information = []
         all_outputs = ["" for _ in range(64)]
         tokens = [0 for _ in range(len(all_outputs))]
+        input_tokens = [0 for _ in range(len(all_outputs))]
         a_responses = []
         b_responses = []
         first_turn = []
         random_personas = list(np.random.choice(personas, len(all_outputs), replace=False))
-        stopwords = ["Human", "AI Assistant"]
+        stopwords = [] # ["Human", "AI Assistant"]
 
         conversations = []
         sample_convo = """Human: Do you know the reasons as to why people love coffee so much?
@@ -146,11 +163,15 @@ def main():
                 },
                 {
                     "role": "user",
-                    "content": f"""Decide on a task you'd like an AI assistant to help you with and try to converse with this assistant. The conversation should be open ended, asking for help, advice, or for the model to accomplish a task. This should simulate having a conversation, with the responses looking a little like this, and should strictly follow the following format:
+                    "content": f"""Decide on a task you'd like an AI assistant to help you with and try to converse with this assistant. You are a {random_personas[j]}. The conversation should be open ended, asking for help, advice, or for the model to accomplish a task. This should simulate having a conversation. Below is a sample conversation for style and formatting reference:
 
+            === SAMPLE CONVERSATION ===
             {sample_convo}
+            === END SAMPLE ===
 
-            Generate the first human turn of the conversation as if you were a {random_personas[j]} starting a conversation in English to an AI assistant.
+            Now, write a **completely new** conversation on a different topic. Do NOT discuss or continue the sample conversation topic. Instead, focus on the real conversation.
+
+            Generate the first human turn of the conversation as if you were a {random_personas[j]} starting a conversation in English as the Human speaking to an AI assistant.
             """,
                 },
             ]
@@ -163,11 +184,16 @@ def main():
         time.sleep(1)
         for i in range(len(all_outputs)):
             final_result = outputs[i].outputs[0].text
+            if len(final_result) < 10:
+                final_result = "ALERT ALERT FAILURE ALERT ALERT"
             test_tracker[i] = final_result
+            final_result = chop_before_prefix(final_result, "Human:")
+            final_result = chop_after_prefix(final_result, "AI Assistant:")
             if not final_result.startswith("Human:"):
                 final_result = "Human: " + final_result
             all_outputs[i] += final_result
             tokens[i] += len(outputs[i].outputs[0].token_ids)
+            input_tokens[i] += len(tokenizer.encode(conversations[i][1]["content"]))
             first_turn.append(final_result + "\nNEXT RESPONSE\n")
 
         additional_turns = np.random.randint(0, 3)
@@ -175,28 +201,28 @@ def main():
             information[i] += str(additional_turns)
         
         if additional_turns == 0:
-            eachturn(all_outputs, llm, sampling_params, False, sample_convo, tokens, convo_tracker=a_responses, update=False)
+            eachturn(all_outputs, llm, sampling_params, False, sample_convo, tokens, input_tokens, tokenizer, convo_tracker=a_responses, update=False)
             rand_seed = np.random.randint(1001, 2000)
             smp2 = SamplingParams(n=1, min_tokens=10, max_tokens = 2048, temperature=1, seed=rand_seed, stop=stopwords, repetition_penalty=1.1, top_p=0.9)           
-            eachturn(all_outputs, llm, smp2, False, sample_convo, tokens, convo_tracker=b_responses, update=False)
+            eachturn(all_outputs, llm, smp2, False, sample_convo, tokens, input_tokens, tokenizer, convo_tracker=b_responses, update=False)
         else:
-            all_outputs = eachturn(all_outputs, llm, sampling_params, False, sample_convo, tokens)
+            all_outputs = eachturn(all_outputs, llm, sampling_params, False, sample_convo, tokens, input_tokens, tokenizer)
 
         for k in range(additional_turns):
-            all_outputs = eachturn(all_outputs, llm, sampling_params, True, sample_convo, tokens)
+            all_outputs = eachturn(all_outputs, llm, sampling_params, True, sample_convo, tokens, input_tokens, tokenizer)
             if k != additional_turns - 1:
-                all_outputs = eachturn(all_outputs, llm, sampling_params, False, sample_convo, tokens)
+                all_outputs = eachturn(all_outputs, llm, sampling_params, False, sample_convo, tokens, input_tokens, tokenizer)
             else:
-                eachturn(all_outputs, llm, sampling_params, False, sample_convo, tokens, convo_tracker=a_responses, update=False)
+                eachturn(all_outputs, llm, sampling_params, False, sample_convo, tokens, input_tokens, tokenizer, convo_tracker=a_responses, update=False)
                 time.sleep(1)
                 rand_seed = np.random.randint(1001, 2000)
                 smp2 = SamplingParams(n=1, min_tokens = 10, max_tokens = 2048, temperature=1, seed=rand_seed, stop=stopwords, repetition_penalty=1.1, top_p=0.9)           
-                eachturn(all_outputs, llm, smp2, False, sample_convo, tokens, convo_tracker=b_responses, update=False)
+                eachturn(all_outputs, llm, smp2, False, sample_convo, tokens, input_tokens, tokenizer, convo_tracker=b_responses, update=False)
 
         for i in range(len(information)):
-            information[i] += "\nTotal Tokens: " + str(tokens[i]) + "\n"
+            information[i] += "\nTotal Input Tokens: " + str(input_tokens[i]) + "\nTotal Output Tokens: " + str(tokens[i]) + "\n"
 
-        with open("sample3.jsonl", "a", encoding="utf-8") as f:
+        with open("sample5.jsonl", "a", encoding="utf-8") as f:
             for i in range(len(all_outputs)):
                 json_entry = {
                     "info": information[i] + f"\nGPU id: {args.gpu_id}",
