@@ -6,4 +6,4 @@ finalconvos.jsonl
 sample5.jsonl
 wandb/
 dpo-training/wandb/
-dpo-training/tulu-3-8b-anthropic-dpo/
+dpo-training/tulu-3-8b-anthropic-dpo-10k-slurm/

@@ -105,8 +105,8 @@ def eachturn(convos, model, sp, is_human, sample, tokens, input_tokens, tokenize
 def main():
     args = parse_args()
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_id)
-    print(f"Running on GPU {args.gpu_id}")
+    # os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_id)
+    # print(f"Running on GPU {args.gpu_id}")
 
     with open("filtered_personas.jsonl", "r", encoding="utf-8") as file:
         personas = [next(iter(json.loads(line).values())) for line in file]
@@ -222,7 +222,7 @@ def main():
         for i in range(len(information)):
             information[i] += "\nTotal Input Tokens: " + str(input_tokens[i]) + "\nTotal Output Tokens: " + str(tokens[i]) + "\n"
 
-        with open("sample5.jsonl", "a", encoding="utf-8") as f:
+        with open("sample6.jsonl", "a", encoding="utf-8") as f:
             for i in range(len(all_outputs)):
                 json_entry = {
                     "info": information[i] + f"\nGPU id: {args.gpu_id}",
