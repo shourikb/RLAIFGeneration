@@ -17,7 +17,8 @@ def load_model_and_tokenizer(model_name="allenai/Llama-3.1-Tulu-3-8B-SFT", custo
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         torch_dtype=torch_dtype,
-        attn_implementation="flash_attention_2",
+        # attn_implementation="flash_attention_2",
+        attn_implementation="sdpa",
     )
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
@@ -159,14 +160,16 @@ def train_model(
 
     return model, tokenizer
 
+TRAIN_DATASET = "../anthropic.jsonl"
+CHECKPOINT_PATH = None # "tulu-3-8b-anthropic-dpo-10k/checkpoints/checkpoint-4900"
+base_save_dir = "tulu-3-8b-anthropic-dpo-10k-slurm"
 
 model_name =  "allenai/Llama-3.1-Tulu-3-8B-SFT"
-model, tokenizer = load_model_and_tokenizer(model_name=model_name)
+model, tokenizer = load_model_and_tokenizer(model_name=model_name, custom_adapter=None)
 
-TRAIN_DATASET = "../anthropic_subset.jsonl"
-base_save_dir = "tulu-3-8b-anthropic-dpo"
 
 raw = load_dataset("json", data_files={"train": TRAIN_DATASET})
+raw["train"] = raw["train"].select(range(10000))
 save_dir = f"{base_save_dir}/model"
 checkpoint_dir = f"{base_save_dir}/checkpoints"
 logging_dir = f"{base_save_dir}/logging"
@@ -182,4 +185,5 @@ model, tokenizer = model, tokenizer = train_model(
             project_name=base_save_dir,
             num_epochs=5,
             learning_rate=2e-4,
+            resume_checkpoint_path=CHECKPOINT_PATH,
         )

@@ -2,19 +2,14 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
 import random
 
-# -----------------------------
-# Configuration
-# -----------------------------
-trained_model_dir = "/srv/nlprx-lab/share6/sbanerjee332/dpo-training/tulu-3-8b-anthropic-dpo/model"
+trained_model_dir = "tulu-3-8b-anthropic-dpo-10k-slurm/model"
 base_model_name = "allenai/Llama-3.1-Tulu-3-8B-SFT"
 
 SEED = 42
 torch.manual_seed(SEED)
 random.seed(SEED)
 
-# -----------------------------
-# Helper to load a model pipeline
-# -----------------------------
+
 def load_pipeline(model_path_or_name):
     print(f"Loading model: {model_path_or_name}")
     tokenizer = AutoTokenizer.from_pretrained(model_path_or_name)
@@ -31,11 +26,9 @@ def load_pipeline(model_path_or_name):
         do_sample=True,
         temperature=0.7,
         top_p=0.9,
-        seed=SEED,  # works in transformers>=4.46
     )
     return pipe, tokenizer
 
-# Load DPO model first
 trained_pipe, trained_tok = load_pipeline(trained_model_dir)
 
 # Initialize but don't load base model yet (lazy load on switch)
@@ -60,7 +53,7 @@ while True:
         use_trained = not use_trained
         if not use_trained and base_pipe is None:
             base_pipe, base_tok = load_pipeline(base_model_name)
-        print(f"\n🔄 Switched to: {'DPO-trained model' if use_trained else 'Base Tulu model'}\n")
+        print(f"\nSwitched to: {'DPO-trained model' if use_trained else 'Base Tulu model'}\n")
         continue
 
     # Pick the active model + history
@@ -74,10 +67,9 @@ while True:
     prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
 
     # Generate reply
-    output = pipe(prompt, max_new_tokens=256, do_sample=True, temperature=0.7, seed=SEED)
+    output = pipe(prompt, max_new_tokens=256, do_sample=True, temperature=0.7)
     response = output[0]["generated_text"][len(prompt):].strip()
 
     print(f"Model ({'DPO' if use_trained else 'Base'}): {response}\n")
 
-    # Append model's response to its *own* history
     msgs.append({"role": "assistant", "content": response})

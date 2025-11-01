@@ -12,7 +12,7 @@ file2_path = 'finalconvos.jsonl'  # 'chosen' + 'response_a'
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Run conversation selection in batches')
-    parser.add_argument('--gpu_id', type=int, default=0, help='GPU ID to use')
+    parser.add_argument('--gpu_id', type=str, default="0", help='Comma-separated list of GPU IDs to use')
     parser.add_argument('--batch_start', type=int, default=0, help='Starting batch index')
     parser.add_argument('--batch_count', type=int, default=1, help='Number of batches to process')
     parser.add_argument('--batch_size', type=int, default=64, help='Number of items per batch')
@@ -21,14 +21,15 @@ def parse_args():
 
 def main():
     args = parse_args()
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_id)
+    gpu_ids = [x.strip() for x in args.gpu_id.split(',')]
+    os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(gpu_ids)
     print(f"Using GPU ID: {args.gpu_id}")
 
     use_anthropic = False
     
     model_name = "Qwen/Qwen3-32B" # "Qwen/Qwen3-14B" # "Qwen/Qwen2.5-14B-Instruct"  "Qwen/Qwen3-30B-A3B-Instruct-2507"  "Unbabel/M-Prometheus-14B"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    llm = LLM(model=model_name, tensor_parallel_size=2)
+    llm = LLM(model=model_name, tensor_parallel_size=2, gpu_memory_utilization=0.85, max_num_seqs=64)
 
     batch_start = args.batch_start
     batch_end = batch_start + args.batch_count
@@ -140,3 +141,6 @@ def main():
 
         print("Average input tokens ", sum(input_tokens) / len(input_tokens))
         print("Average output tokens ", sum(all_normal_tokens) / len(all_normal_tokens))
+
+if __name__ == "__main__":
+    main()
